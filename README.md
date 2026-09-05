@@ -28,7 +28,7 @@ Para finalidade de praticar Gestão Ágil antes da matéria constar em meu curr�
 
 Em seguida, utilizei uma ferramenta de IA (ChatGPT) para me trazer um feedback e, por fim, essa mesma ferramenta reescrever o backlog, a fim de aprender por meio de exemplos e não gerar _burnout_ ao reescrever este mesmo backlog por muitas horas.
 
-<detail>
+<details>
 
 <summary>Definição de backlog original</summary>
 
@@ -104,9 +104,9 @@ Em seguida, utilizei uma ferramenta de IA (ChatGPT) para me trazer um feedback e
 
 Dúvida Agile: é normal ser tão verboso? Ou fiz algo de errado? É um escopo minúsculo com o que seriam três requisitos funcionais: Listar personagens, Consultar personagem, Armazenar consulta em log. Só esses três itens viraram duas epics e várias Features/Stories
 
-</detail>
+</details>
 
-<detail>
+<details>
 
 <summary>Feedbacks do ChatGPT</summary>
 
@@ -248,9 +248,9 @@ Mas isso não significa que cada pedaço do segundo conjunto precise virar uma S
 
 Esse é o ponto que eu mudaria bastante no seu backlog.
 
-</detail>
+</details>
 
-<detail>
+<details>
 
 <summary>Formato reescrito pelo ChatGPT</summary>
 
@@ -353,4 +353,4 @@ O backlog descreve principalmente **o trabalho e os resultados esperados**, e n�
 
 As decisões sobre classes, métodos, bibliotecas, estrutura interna e demais detalhes de implementação devem permanecer flexíveis enquanto não houver uma razão para fixá-las.
 
-</detail>
+</details>

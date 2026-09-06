@@ -7,9 +7,14 @@ import java.util.Scanner;
 
 public class MainMenuView implements View {
 
+    private Scanner sc;
+
+    public MainMenuView() {
+        sc = Console.scanner();
+    }
+
     @Override
     public void loop() {
-        Scanner sc = Console.scanner();
         int option = 0;
 
         do {
@@ -53,7 +58,7 @@ public class MainMenuView implements View {
     }
 
     private void renderListarScreen() {
-        return;
+        new CharacterListView().loop();
     }
 
     private void renderConsultarScreen() {

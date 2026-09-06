@@ -1,6 +1,5 @@
 package br.edu.fatecpg.rickandmortyapi;
 
-import br.edu.fatecpg.rickandmortyapi.infrastructure.tui.Ansi;
 import br.edu.fatecpg.rickandmortyapi.infrastructure.tui.Console;
 import br.edu.fatecpg.rickandmortyapi.ui.views.MainMenuView;
 import java.util.Scanner;

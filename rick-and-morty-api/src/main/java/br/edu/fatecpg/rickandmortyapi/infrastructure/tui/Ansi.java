@@ -70,7 +70,7 @@ public final class Ansi {
         return fgColor + str + RESET;
     }
 
-    public static String printColor(String str, Ansi.Background bgColor) {
+    public static String colorize(String str, Ansi.Background bgColor) {
         return bgColor + str + RESET;
     }
 }

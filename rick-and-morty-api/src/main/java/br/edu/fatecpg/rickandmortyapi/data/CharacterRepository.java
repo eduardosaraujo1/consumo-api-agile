@@ -44,9 +44,9 @@ public class CharacterRepository {
     }
 
     public List<Character> listCharacters(
-        String nameQuery,
         Integer limit,
-        Integer offset
+        Integer offset,
+        String nameQuery
     )
         throws CharacterListUnreachableException, InvalidCharacterListResponseException {
         // Repository needs to transparently translate the `page=N` API into a proper `limit` offset.
@@ -101,6 +101,16 @@ public class CharacterRepository {
         int to = Math.min(from + actualLimit, characters.size());
 
         return characters.subList(from, to);
+    }
+
+    public List<Character> listCharacters(int limit, int offset)
+        throws CharacterListUnreachableException, InvalidCharacterListResponseException {
+        return listCharacters(limit, offset, null);
+    }
+
+    public List<Character> listCharacters()
+        throws CharacterListUnreachableException, InvalidCharacterListResponseException {
+        return listCharacters(20, 0, null);
     }
 }
 

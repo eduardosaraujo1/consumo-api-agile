@@ -1,15 +1,26 @@
 package br.edu.fatecpg.rickandmortyapi.data;
 
-import br.edu.fatecpg.rickandmortyapi.domain.model.Character;
-import java.util.List;
+import br.edu.fatecpg.rickandmortyapi.domain.model.CharacterList;
 
 public class CharacterRepository {
 
-    public List<Character> listCharacters(String nameQuery) {
+    public CharacterList listCharacters(
+        String nameQuery,
+        int limit,
+        int offset
+    ) {
         throw new RuntimeException();
     }
 
-    public List<Character> listCharacters() {
+    public CharacterList listCharacters(String nameQuery, int limit) {
+        return listCharacters(nameQuery, limit, 0);
+    }
+
+    public CharacterList listCharacters(String nameQuery) {
+        return listCharacters(nameQuery, 0, 0);
+    }
+
+    public CharacterList listCharacters() {
         return listCharacters("");
     }
 }

@@ -2,6 +2,7 @@ package br.edu.fatecpg.rickandmortyapi;
 
 import br.edu.fatecpg.rickandmortyapi.infrastructure.tui.Ansi;
 import br.edu.fatecpg.rickandmortyapi.infrastructure.tui.Console;
+import br.edu.fatecpg.rickandmortyapi.ui.views.MainMenuView;
 import java.util.Scanner;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,8 +19,6 @@ public class RickAndMortyApiApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
         Console.setInternalScanner(new Scanner(System.in));
 
-        System.out.println(
-            Ansi.colorize("Hello, world!", Ansi.Foreground.YELLOW)
-        );
+        new MainMenuView().loop();
     }
 }

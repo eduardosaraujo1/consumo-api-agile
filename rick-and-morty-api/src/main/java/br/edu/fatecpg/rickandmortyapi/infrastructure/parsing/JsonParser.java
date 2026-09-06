@@ -6,7 +6,7 @@ public class JsonParser {
 
     private static ObjectMapper mapper;
 
-    public <T> T parseString(String str, Class<T> clazz) {
+    public static <T> T parseString(String str, Class<T> clazz) {
         return mapper.readValue(str, clazz);
     }
 }

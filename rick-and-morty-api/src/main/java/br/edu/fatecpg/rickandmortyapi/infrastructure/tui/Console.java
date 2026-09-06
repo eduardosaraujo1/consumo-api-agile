@@ -2,13 +2,13 @@ package br.edu.fatecpg.rickandmortyapi.infrastructure.tui;
 
 import java.util.Scanner;
 
-public class ScannerProvider {
+public class Console {
 
     private static Scanner _s;
 
-    private ScannerProvider() {}
+    private Console() {}
 
-    public static void setScanner(Scanner s) {
+    public static void setInternalScanner(Scanner s) {
         _s = s;
     }
 
@@ -18,5 +18,10 @@ public class ScannerProvider {
         }
 
         return _s;
+    }
+
+    public static void clear() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 }

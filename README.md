@@ -303,7 +303,8 @@ Esse é o ponto que eu mudaria bastante no seu backlog.
 
 **Tasks iniciais:**
 
-- Definir mecanismo de logging
+- Definir interface de logging
+- Implementar escrita de arquivo log
 - Adicionar timestamp aos registros
 
 ---

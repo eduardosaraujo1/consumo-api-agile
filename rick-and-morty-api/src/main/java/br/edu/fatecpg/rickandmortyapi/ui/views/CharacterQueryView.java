@@ -3,7 +3,7 @@ package br.edu.fatecpg.rickandmortyapi.ui.views;
 import br.edu.fatecpg.rickandmortyapi.data.CharacterRepository;
 import br.edu.fatecpg.rickandmortyapi.domain.exceptions.CharacterListUnreachableException;
 import br.edu.fatecpg.rickandmortyapi.domain.exceptions.InvalidCharacterListResponseException;
-import br.edu.fatecpg.rickandmortyapi.domain.model.SeriesCharacter;
+import br.edu.fatecpg.rickandmortyapi.domain.model.Character;
 import br.edu.fatecpg.rickandmortyapi.infrastructure.tui.Ansi;
 import br.edu.fatecpg.rickandmortyapi.infrastructure.tui.Console;
 import br.edu.fatecpg.rickandmortyapi.infrastructure.tui.View;
@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class CharacterListView implements View {
+public class CharacterQueryView implements View {
 
     private CharacterRepository repo;
     private Scanner sc;
 
-    public CharacterListView() {
+    public CharacterQueryView() {
         repo = new CharacterRepository();
         sc = Console.scanner();
     }
@@ -28,7 +28,7 @@ public class CharacterListView implements View {
 
         // State
         int currentPage = 1;
-        List<SeriesCharacter> currentList = null;
+        List<Character> currentList = null;
         int cachedPage = -1;
         char option = '-';
 
@@ -65,14 +65,14 @@ public class CharacterListView implements View {
                     )
                 );
                 Console.pause("[Enter] Ok");
-                currentList = new ArrayList<SeriesCharacter>();
+                currentList = new ArrayList<Character>();
                 cachedPage = -1;
             }
 
             if (currentList.isEmpty()) {
                 System.out.println("Nenhum personagem encontrado.");
             } else {
-                for (SeriesCharacter c : currentList) {
+                for (Character c : currentList) {
                     // TODO: display character in a prettiter format.
                     System.out.println(c);
                 }

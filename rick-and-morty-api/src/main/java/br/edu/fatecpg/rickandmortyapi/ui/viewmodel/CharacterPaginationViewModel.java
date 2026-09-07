@@ -34,7 +34,7 @@ public class CharacterPaginationViewModel {
                 int limit = ROWS_PER_PAGE;
                 int offset = ROWS_PER_PAGE * (_currentPage - 1);
 
-                if (_nameQuery.isBlank()) {
+                if (_nameQuery == null || _nameQuery.isBlank()) {
                     _characterList = _repo.listCharacters(limit, offset);
                 } else {
                     _characterList = _repo.listCharacters(

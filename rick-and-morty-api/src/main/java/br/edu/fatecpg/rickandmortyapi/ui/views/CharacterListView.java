@@ -1,63 +1,48 @@
 package br.edu.fatecpg.rickandmortyapi.ui.views;
 
-import br.edu.fatecpg.rickandmortyapi.data.CharacterRepository;
-import br.edu.fatecpg.rickandmortyapi.domain.exceptions.CharacterListUnreachableException;
-import br.edu.fatecpg.rickandmortyapi.domain.exceptions.InvalidCharacterListResponseException;
 import br.edu.fatecpg.rickandmortyapi.domain.model.SeriesCharacter;
 import br.edu.fatecpg.rickandmortyapi.infrastructure.tui.Ansi;
 import br.edu.fatecpg.rickandmortyapi.infrastructure.tui.Console;
 import br.edu.fatecpg.rickandmortyapi.infrastructure.tui.View;
-import java.util.ArrayList;
+import br.edu.fatecpg.rickandmortyapi.ui.viewmodel.CharacterPaginationViewModel;
 import java.util.List;
 import java.util.Scanner;
 
 public class CharacterListView implements View {
 
-    private CharacterRepository repo;
+    private CharacterPaginationViewModel paginator;
     private Scanner sc;
 
     public CharacterListView() {
-        repo = new CharacterRepository();
         sc = Console.scanner();
+        paginator = new CharacterPaginationViewModel();
+    }
+
+    private void writeHeader() {
+        System.out.println(
+            "2. Lista de Personagens --- Página %d de %d".formatted(
+                paginator.getPage(),
+                // TODO: arrume isso
+                -1
+            )
+        );
     }
 
     @Override
     public void loop() {
-        // Display Parameters
-        final int ROWS_PER_PAGE = 20;
-
-        // State
-        int currentPage = 1;
-        List<SeriesCharacter> currentList = null;
-        int cachedPage = -1;
         char option = '-';
 
         do {
             Console.clear();
+            writeHeader();
 
-            System.out.println(
-                "2. Lista de Personagens --- Página " + currentPage
-            );
             System.out.println(
                 Ansi.colorize("Carregando...", Ansi.Background.CYAN)
             );
 
-            try {
-                if (currentList == null || cachedPage != currentPage) {
-                    currentList = repo.listCharacters(
-                        ROWS_PER_PAGE,
-                        ROWS_PER_PAGE * (currentPage - 1)
-                    );
-                    cachedPage = currentPage;
-                }
-            } catch (
-                CharacterListUnreachableException
-                | InvalidCharacterListResponseException e
-            ) {
-                // It is possible we have just reached the end of the list and no error occurred
-                // (I did not realize I'd need  registryCount to validate if the next fetch operation.
-                // I'm not changing the repository I've spent enough time on that)
-                // Let's set the list to empty, mark the last cached page as "none" and allow the pagination overflow.
+            List<SeriesCharacter> currentList = paginator.getCharacterList();
+
+            if (paginator.hasFetchError()) {
                 System.out.println(
                     Ansi.colorize(
                         "Não foi possível carregar a lista. O resultado será vazio.",
@@ -65,9 +50,10 @@ public class CharacterListView implements View {
                     )
                 );
                 Console.pause("[Enter] Ok");
-                currentList = new ArrayList<SeriesCharacter>();
-                cachedPage = -1;
             }
+
+            Console.clear();
+            writeHeader();
 
             if (currentList.isEmpty()) {
                 System.out.println("Nenhum personagem encontrado.");
@@ -92,9 +78,8 @@ public class CharacterListView implements View {
             switch (option) {
                 case 'q' -> System.out.println("Saindo...");
                 case 'p' -> {
-                    if (currentPage > 1) {
-                        --currentPage;
-                    } else {
+                    if (!paginator.previousPage()) {
+                        Console.clear();
                         System.out.println("Você já está na primeira página");
                         Console.pause("[ Enter ] OK");
                     }
@@ -103,7 +88,11 @@ public class CharacterListView implements View {
                     // Here is where we would check if ROW_PER_PAGE * page is greater than count.
                     // Since that piece of information is not available yet, just ignore it.
                     // TODO: maybe add a sprint to fix this
-                    currentPage++;
+                    if (!paginator.nextPage()) {
+                        Console.clear();
+                        System.out.println("Você já está na última página");
+                        Console.pause("[ Enter ] OK");
+                    }
                 }
                 default -> {
                     System.out.println("Opção inválida. Tente novamente.");

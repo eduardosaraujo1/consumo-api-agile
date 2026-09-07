@@ -2,7 +2,7 @@ package br.edu.fatecpg.rickandmortyapi.data;
 
 import br.edu.fatecpg.rickandmortyapi.domain.exceptions.CharacterListUnreachableException;
 import br.edu.fatecpg.rickandmortyapi.domain.exceptions.InvalidCharacterListResponseException;
-import br.edu.fatecpg.rickandmortyapi.domain.model.Character;
+import br.edu.fatecpg.rickandmortyapi.domain.model.SeriesCharacter;
 import br.edu.fatecpg.rickandmortyapi.infrastructure.api.ApiClient;
 import br.edu.fatecpg.rickandmortyapi.infrastructure.parsing.JsonParser;
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class CharacterRepository {
         }
     }
 
-    public List<Character> listCharacters(
+    public List<SeriesCharacter> listCharacters(
         Integer limit,
         Integer offset,
         String nameQuery
@@ -69,7 +69,7 @@ public class CharacterRepository {
         }
 
         if (actualLimit == 0) {
-            return new ArrayList<Character>();
+            return new ArrayList<SeriesCharacter>();
         }
 
         // Translate the limit..offset format into the API's hardcoded page size approach
@@ -78,7 +78,7 @@ public class CharacterRepository {
         int lastPage = (lastRecord - 1) / API_PAGE_SIZE + 1;
 
         // Populate the initial array with every entry from the API response.
-        List<Character> characters = new ArrayList<Character>();
+        List<SeriesCharacter> characters = new ArrayList<SeriesCharacter>();
 
         for (int page = firstPage; page <= lastPage; page++) {
             HttpResponse<String> response = hitCharacterListEndpoint(
@@ -103,15 +103,15 @@ public class CharacterRepository {
         return characters.subList(from, to);
     }
 
-    public List<Character> listCharacters(int limit, int offset)
+    public List<SeriesCharacter> listCharacters(int limit, int offset)
         throws CharacterListUnreachableException, InvalidCharacterListResponseException {
         return listCharacters(limit, offset, null);
     }
 
-    public List<Character> listCharacters()
+    public List<SeriesCharacter> listCharacters()
         throws CharacterListUnreachableException, InvalidCharacterListResponseException {
         return listCharacters(20, 0, null);
     }
 }
 
-record ApiResultDto(List<Character> results) {}
+record ApiResultDto(List<SeriesCharacter> results) {}

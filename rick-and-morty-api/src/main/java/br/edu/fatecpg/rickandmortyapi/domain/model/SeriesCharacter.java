@@ -1,6 +1,6 @@
 package br.edu.fatecpg.rickandmortyapi.domain.model;
 
-public record Character(
+public record SeriesCharacter(
     int id,
     String name,
     String status,

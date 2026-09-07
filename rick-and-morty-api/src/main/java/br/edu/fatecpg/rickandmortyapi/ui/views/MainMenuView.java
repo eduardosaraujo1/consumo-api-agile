@@ -62,6 +62,6 @@ public class MainMenuView implements View {
     }
 
     private void renderConsultarScreen() {
-        return;
+        new CharacterQueryView().loop();
     }
 }

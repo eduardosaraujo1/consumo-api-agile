@@ -64,6 +64,7 @@ public class CharacterQueryView implements View {
             );
 
             List<SeriesCharacter> currentList = paginator.getCharacterList();
+            // TODO: add the network error message back
 
             // Step: display data
             Console.clear();

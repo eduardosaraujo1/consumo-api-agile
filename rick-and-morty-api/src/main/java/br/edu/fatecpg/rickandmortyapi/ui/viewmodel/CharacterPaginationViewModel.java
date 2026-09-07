@@ -35,10 +35,10 @@ public class CharacterPaginationViewModel {
                 int offset = ROWS_PER_PAGE * (_currentPage - 1);
                 CharacterListResponse response;
 
-                if (_nameQuery == null || _nameQuery.isBlank()) {
-                    response = _repo.listCharacters(limit, offset);
-                } else {
+                if (hasQuery()) {
                     response = _repo.listCharacters(limit, offset, _nameQuery);
+                } else {
+                    response = _repo.listCharacters(limit, offset);
                 }
 
                 _characterList = response.list();
@@ -49,11 +49,6 @@ public class CharacterPaginationViewModel {
             CharacterListUnreachableException
             | InvalidCharacterListResponseException e
         ) {
-            // It is possible we have just reached the end of the list and no error occurred
-            // (I did not realize I'd need  registryCount to validate if the next fetch operation.
-            // I'm not changing the repository yet I've spent enough time on that)
-            // For now let's presume it actually went wrong, and show an error message
-
             _characterList = new ArrayList<SeriesCharacter>();
             _cachedPage = -1;
             // Only notify a fetch error if the problem is a user network issue and not an error code (i.e. 404 not found)
@@ -68,7 +63,6 @@ public class CharacterPaginationViewModel {
     }
 
     public boolean nextPage() {
-        // In the future: compare with Math.ceil(cachedItemCount / ROWS_PER_PAGE)
         int max = maxPageCount();
         if (_currentPage >= max) {
             _currentPage = max;
@@ -93,6 +87,10 @@ public class CharacterPaginationViewModel {
     }
 
     public void setQuery(String q) {
+        if (!q.equals(_nameQuery)) {
+            _currentPage = 1;
+        }
+
         if (q == null || q.isBlank()) {
             clearQuery();
         } else {

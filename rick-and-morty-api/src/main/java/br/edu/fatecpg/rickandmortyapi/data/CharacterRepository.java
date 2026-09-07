@@ -7,7 +7,9 @@ import br.edu.fatecpg.rickandmortyapi.domain.model.SeriesCharacter;
 import br.edu.fatecpg.rickandmortyapi.infrastructure.api.ApiClient;
 import br.edu.fatecpg.rickandmortyapi.infrastructure.parsing.JsonParser;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +30,8 @@ public class CharacterRepository {
         String actualEndpoint = endpoint + "?page=" + page;
 
         if (nameQuery != null && !nameQuery.isBlank()) {
-            actualEndpoint += "&name=" + nameQuery;
+            actualEndpoint +=
+                "&name=" + URLEncoder.encode(nameQuery, StandardCharsets.UTF_8);
         }
 
         try {

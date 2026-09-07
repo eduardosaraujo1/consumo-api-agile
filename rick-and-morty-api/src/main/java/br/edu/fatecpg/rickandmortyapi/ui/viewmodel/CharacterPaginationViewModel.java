@@ -25,15 +25,24 @@ public class CharacterPaginationViewModel {
         _repo = new CharacterRepository();
     }
 
-    public List<SeriesCharacter> getCharacterList() {
+    public List<SeriesCharacter> getCharacterList(String nameQuery) {
         _hasFetchError = false;
 
         try {
             if (_characterList == null || _cachedPage != _currentPage) {
-                _characterList = _repo.listCharacters(
-                    ROWS_PER_PAGE,
-                    ROWS_PER_PAGE * (_currentPage - 1)
-                );
+                int limit = ROWS_PER_PAGE;
+                int offset = ROWS_PER_PAGE * (_currentPage - 1);
+
+                if (nameQuery.isBlank()) {
+                    _characterList = _repo.listCharacters(limit, offset);
+                } else {
+                    _characterList = _repo.listCharacters(
+                        limit,
+                        offset,
+                        nameQuery
+                    );
+                }
+
                 _cachedPage = _currentPage;
             }
         } catch (
@@ -47,7 +56,8 @@ public class CharacterPaginationViewModel {
 
             _characterList = new ArrayList<SeriesCharacter>();
             _cachedPage = -1;
-            _hasFetchError = true;
+            // Only notify a fetch error if the problem is a user network issue and not an error code (i.e. 404 not found)
+            _hasFetchError = e instanceof CharacterListUnreachableException;
         }
 
         return _characterList;
@@ -64,11 +74,15 @@ public class CharacterPaginationViewModel {
     }
 
     public boolean previousPage() {
-        if (_currentPage < 1) {
+        if (_currentPage <= 1) {
             return false;
         }
 
         --_currentPage;
         return true;
+    }
+
+    public int getPage() {
+        return _currentPage;
     }
 }

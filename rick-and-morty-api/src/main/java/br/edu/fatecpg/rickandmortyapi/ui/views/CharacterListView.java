@@ -22,8 +22,7 @@ public class CharacterListView implements View {
         System.out.println(
             "2. Lista de Personagens --- Página %d de %d".formatted(
                 paginator.getPage(),
-                // TODO: arrume isso
-                -1
+                paginator.maxPageCount()
             )
         );
     }
@@ -85,9 +84,6 @@ public class CharacterListView implements View {
                     }
                 }
                 case 'n' -> {
-                    // Here is where we would check if ROW_PER_PAGE * page is greater than count.
-                    // Since that piece of information is not available yet, just ignore it.
-                    // TODO: maybe add a sprint to fix this
                     if (!paginator.nextPage()) {
                         Console.clear();
                         System.out.println("Você já está na última página");
@@ -95,6 +91,7 @@ public class CharacterListView implements View {
                     }
                 }
                 default -> {
+                    Console.clear();
                     System.out.println("Opção inválida. Tente novamente.");
                     Console.pause("[ Enter ] OK");
                 }

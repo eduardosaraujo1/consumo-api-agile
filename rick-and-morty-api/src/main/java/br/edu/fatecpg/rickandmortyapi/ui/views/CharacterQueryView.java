@@ -21,7 +21,10 @@ public class CharacterQueryView implements View {
     private void writeHeader() {
         System.out.println(
             Ansi.colorize(
-                "3. Pesquisa de Personagens --- Página " + paginator.getPage(),
+                "3. Pesquisa de Personagens --- Página %d de %d".formatted(
+                    paginator.getPage(),
+                    paginator.maxPageCount()
+                ),
                 Ansi.Foreground.CYAN
             )
         );
@@ -49,7 +52,11 @@ public class CharacterQueryView implements View {
                         " para sair)\n> "
                 );
                 String input = sc.nextLine();
-                if (input.equals("/q")) return;
+
+                if (input.equals("/q")) {
+                    return;
+                }
+
                 String sanitized = input
                     .substring(0, Math.min(input.length(), 64))
                     .trim();
@@ -64,7 +71,17 @@ public class CharacterQueryView implements View {
             );
 
             List<SeriesCharacter> currentList = paginator.getCharacterList();
-            // TODO: add the network error message back
+
+            // Step: handle possible network error
+            if (paginator.hasFetchError()) {
+                System.out.println(
+                    Ansi.colorize(
+                        "Não foi possível carregar a lista. O resultado será vazio.",
+                        Ansi.Foreground.RED
+                    )
+                );
+                Console.pause("[Enter] Ok");
+            }
 
             // Step: display data
             Console.clear();
@@ -99,14 +116,12 @@ public class CharacterQueryView implements View {
                 }
                 case 'p' -> {
                     if (!paginator.previousPage()) {
+                        Console.clear();
                         System.out.println("Você já está na primeira página");
                         Console.pause("[ Enter ] OK");
                     }
                 }
                 case 'n' -> {
-                    // Here is where we would check if ROW_PER_PAGE * page is greater than count.
-                    // Since that piece of information is not available yet, just ignore it.
-                    // TODO: maybe add a sprint to fix this
                     if (!paginator.nextPage()) {
                         Console.clear();
                         System.out.println("Você já está na última página");
@@ -122,12 +137,3 @@ public class CharacterQueryView implements View {
         } while (option != 'q');
     }
 }
-
-// Testes:
-// - Testar saida com /q
-// - Pesquisar com um nome normal
-// - Pesquisar sem digitar nada
-// - Pesquisar com espaços em branco
-// - Pesquisar sem resultados
-// - Testar Previous na primeira página
-// - Testar Next algumas vezes

@@ -1,5 +1,6 @@
 package br.edu.fatecpg.rickandmortyapi.data;
 
+import br.edu.fatecpg.rickandmortyapi.data.dto.CharacterListResponse;
 import br.edu.fatecpg.rickandmortyapi.domain.exceptions.CharacterListUnreachableException;
 import br.edu.fatecpg.rickandmortyapi.domain.exceptions.InvalidCharacterListResponseException;
 import br.edu.fatecpg.rickandmortyapi.domain.model.SeriesCharacter;
@@ -18,7 +19,11 @@ public class CharacterRepository {
         String nameQuery
     )
         throws InvalidCharacterListResponseException, CharacterListUnreachableException {
-        if (page < 1) page = 1;
+        if (page < 1) {
+            throw new IllegalArgumentException(
+                "Page number must be greater than 0."
+            );
+        }
 
         String actualEndpoint = endpoint + "?page=" + page;
 
@@ -31,6 +36,7 @@ public class CharacterRepository {
 
             if (response.statusCode() < 200 || response.statusCode() > 299) {
                 throw new InvalidCharacterListResponseException(
+                    response.statusCode(),
                     "Expected 2xx response from API. Received " +
                         response.statusCode() +
                         "."
@@ -43,7 +49,7 @@ public class CharacterRepository {
         }
     }
 
-    public List<SeriesCharacter> listCharacters(
+    public CharacterListResponse listCharacters(
         Integer limit,
         Integer offset,
         String nameQuery
@@ -69,7 +75,10 @@ public class CharacterRepository {
         }
 
         if (actualLimit == 0) {
-            return new ArrayList<SeriesCharacter>();
+            return new CharacterListResponse(
+                new ArrayList<SeriesCharacter>(),
+                0
+            );
         }
 
         // Translate the limit..offset format into the API's hardcoded page size approach
@@ -79,6 +88,7 @@ public class CharacterRepository {
 
         // Populate the initial array with every entry from the API response.
         List<SeriesCharacter> characters = new ArrayList<SeriesCharacter>();
+        int characterCount = 0;
 
         for (int page = firstPage; page <= lastPage; page++) {
             HttpResponse<String> response = hitCharacterListEndpoint(
@@ -91,6 +101,7 @@ public class CharacterRepository {
                 ApiResultDto.class
             );
 
+            characterCount = pageResult.info().count();
             characters.addAll(pageResult.results());
         }
 
@@ -100,18 +111,23 @@ public class CharacterRepository {
         int from = offsetWithinResult;
         int to = Math.min(from + actualLimit, characters.size());
 
-        return characters.subList(from, to);
+        return new CharacterListResponse(
+            characters.subList(from, to),
+            characterCount
+        );
     }
 
-    public List<SeriesCharacter> listCharacters(int limit, int offset)
+    public CharacterListResponse listCharacters(int limit, int offset)
         throws CharacterListUnreachableException, InvalidCharacterListResponseException {
         return listCharacters(limit, offset, null);
     }
 
-    public List<SeriesCharacter> listCharacters()
+    public CharacterListResponse listCharacters()
         throws CharacterListUnreachableException, InvalidCharacterListResponseException {
         return listCharacters(20, 0, null);
     }
 }
 
-record ApiResultDto(List<SeriesCharacter> results) {}
+record ApiResultDto(List<SeriesCharacter> results, RequestInfoDto info) {}
+
+record RequestInfoDto(int count) {}

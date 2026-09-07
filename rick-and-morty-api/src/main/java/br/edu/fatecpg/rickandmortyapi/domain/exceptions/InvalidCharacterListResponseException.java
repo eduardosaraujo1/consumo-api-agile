@@ -4,18 +4,27 @@ public class InvalidCharacterListResponseException
     extends CharacterListException
 {
 
-    public InvalidCharacterListResponseException() {
-        super();
-    }
+    public int statusCode;
 
-    public InvalidCharacterListResponseException(String message) {
-        super(message);
+    public InvalidCharacterListResponseException(int statusCode) {
+        super();
+        this.statusCode = statusCode;
     }
 
     public InvalidCharacterListResponseException(
+        int statusCode,
+        String message
+    ) {
+        super(message);
+        this.statusCode = statusCode;
+    }
+
+    public InvalidCharacterListResponseException(
+        int statusCode,
         String message,
         Throwable cause
     ) {
         super(message, cause);
+        this.statusCode = statusCode;
     }
 }

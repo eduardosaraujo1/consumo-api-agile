@@ -35,7 +35,7 @@ public class CharacterPaginationViewModel {
                 int offset = ROWS_PER_PAGE * (_currentPage - 1);
                 CharacterListResponse response;
 
-                if (_nameQuery.isBlank()) {
+                if (_nameQuery == null || _nameQuery.isBlank()) {
                     response = _repo.listCharacters(limit, offset);
                 } else {
                     response = _repo.listCharacters(limit, offset, _nameQuery);

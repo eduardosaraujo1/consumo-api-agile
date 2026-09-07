@@ -13,9 +13,6 @@ public class CharacterQueryView implements View {
     private Scanner sc;
     private CharacterPaginationViewModel paginator;
 
-    // Inline State
-    String query = null;
-
     public CharacterQueryView() {
         sc = Console.scanner();
         paginator = new CharacterPaginationViewModel();
@@ -28,7 +25,7 @@ public class CharacterQueryView implements View {
                 Ansi.Foreground.CYAN
             )
         );
-        System.out.println("Busca: '" + query + "'");
+        System.out.println("Busca: '" + paginator.getQuery() + "'");
     }
 
     @Override
@@ -39,7 +36,7 @@ public class CharacterQueryView implements View {
             Console.clear();
 
             // Step: define search query
-            while (query == null || query.isBlank()) {
+            while (!paginator.hasQuery()) {
                 System.out.println(
                     Ansi.colorize(
                         "3. Pesquisa de Personagens",
@@ -47,14 +44,16 @@ public class CharacterQueryView implements View {
                     )
                 );
                 System.out.print(
-                    "Digite um termo de pesquisa(\\q para sair)\n> "
+                    "Digite um termo de pesquisa (ou " +
+                        Ansi.colorize("/q", Ansi.Foreground.GREEN) +
+                        " para sair)\n> "
                 );
                 String input = sc.nextLine();
-                query = input.substring(0, Math.min(input.length(), 64));
-            }
-
-            if (query == "\\q") {
-                return;
+                if (input.equals("/q")) return;
+                String sanitized = input
+                    .substring(0, Math.min(input.length(), 64))
+                    .trim();
+                paginator.setQuery(sanitized);
             }
 
             // Step: Wait for data to be available
@@ -64,9 +63,7 @@ public class CharacterQueryView implements View {
                 Ansi.colorize("Carregando...", Ansi.Background.CYAN)
             );
 
-            List<SeriesCharacter> currentList = paginator.getCharacterList(
-                query
-            );
+            List<SeriesCharacter> currentList = paginator.getCharacterList();
 
             // Step: display data
             Console.clear();
@@ -97,7 +94,7 @@ public class CharacterQueryView implements View {
             switch (option) {
                 case 'q' -> System.out.println("Saindo...");
                 case 'c' -> {
-                    query = null;
+                    paginator.clearQuery();
                 }
                 case 'p' -> {
                     if (!paginator.previousPage()) {
@@ -124,3 +121,12 @@ public class CharacterQueryView implements View {
         } while (option != 'q');
     }
 }
+
+// Testes:
+// - Testar saida com /q
+// - Pesquisar com um nome normal
+// - Pesquisar sem digitar nada
+// - Pesquisar com espaços em branco
+// - Pesquisar sem resultados
+// - Testar Previous na primeira página
+// - Testar Next algumas vezes

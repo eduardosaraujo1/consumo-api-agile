@@ -14,7 +14,8 @@ public class CharacterPaginationViewModel {
     private final CharacterRepository _repo;
 
     private int _currentPage = 1;
-    private int _cachedPage = 1;
+    private int _cachedPage = 0;
+    private String _nameQuery = null;
     private List<SeriesCharacter> _characterList = null;
 
     private boolean _hasFetchError = false;
@@ -25,7 +26,7 @@ public class CharacterPaginationViewModel {
         _repo = new CharacterRepository();
     }
 
-    public List<SeriesCharacter> getCharacterList(String nameQuery) {
+    public List<SeriesCharacter> getCharacterList() {
         _hasFetchError = false;
 
         try {
@@ -33,13 +34,13 @@ public class CharacterPaginationViewModel {
                 int limit = ROWS_PER_PAGE;
                 int offset = ROWS_PER_PAGE * (_currentPage - 1);
 
-                if (nameQuery.isBlank()) {
+                if (_nameQuery.isBlank()) {
                     _characterList = _repo.listCharacters(limit, offset);
                 } else {
                     _characterList = _repo.listCharacters(
                         limit,
                         offset,
-                        nameQuery
+                        _nameQuery
                     );
                 }
 
@@ -84,5 +85,27 @@ public class CharacterPaginationViewModel {
 
     public int getPage() {
         return _currentPage;
+    }
+
+    public void setQuery(String q) {
+        if (q == null || q.isBlank()) {
+            clearQuery();
+        } else {
+            _nameQuery = q;
+        }
+    }
+
+    public void clearQuery() {
+        _nameQuery = null;
+        _cachedPage = 0;
+        _characterList = null;
+    }
+
+    public String getQuery() {
+        return _nameQuery;
+    }
+
+    public boolean hasQuery() {
+        return _nameQuery != null && !_nameQuery.isBlank();
     }
 }

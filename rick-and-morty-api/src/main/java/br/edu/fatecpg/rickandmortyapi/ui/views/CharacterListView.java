@@ -58,8 +58,14 @@ public class CharacterListView implements View {
                 System.out.println("Nenhum personagem encontrado.");
             } else {
                 for (SeriesCharacter c : currentList) {
-                    // TODO: display character in a prettiter format.
-                    System.out.println(c);
+                    System.out.printf(
+                        "#%d: %s — %s, %s, %s%n",
+                        c.id(),
+                        c.name(),
+                        c.status(),
+                        c.species(),
+                        c.gender()
+                    );
                 }
             }
 

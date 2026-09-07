@@ -1,6 +1,7 @@
 package br.edu.fatecpg.rickandmortyapi.ui.viewmodel;
 
 import br.edu.fatecpg.rickandmortyapi.data.CharacterRepository;
+import br.edu.fatecpg.rickandmortyapi.data.dto.CharacterListResponse;
 import br.edu.fatecpg.rickandmortyapi.domain.exceptions.CharacterListUnreachableException;
 import br.edu.fatecpg.rickandmortyapi.domain.exceptions.InvalidCharacterListResponseException;
 import br.edu.fatecpg.rickandmortyapi.domain.model.SeriesCharacter;
@@ -17,10 +18,9 @@ public class CharacterPaginationViewModel {
     private int _cachedPage = 0;
     private String _nameQuery = null;
     private List<SeriesCharacter> _characterList = null;
+    private int _totalCharacterCount = 0;
 
     private boolean _hasFetchError = false;
-
-    // Will include a "cachedItemCount" in the future to define how many pages there are.
 
     public CharacterPaginationViewModel() {
         _repo = new CharacterRepository();
@@ -33,17 +33,16 @@ public class CharacterPaginationViewModel {
             if (_characterList == null || _cachedPage != _currentPage) {
                 int limit = ROWS_PER_PAGE;
                 int offset = ROWS_PER_PAGE * (_currentPage - 1);
+                CharacterListResponse response;
 
                 if (_nameQuery.isBlank()) {
-                    _characterList = _repo.listCharacters(limit, offset);
+                    response = _repo.listCharacters(limit, offset);
                 } else {
-                    _characterList = _repo.listCharacters(
-                        limit,
-                        offset,
-                        _nameQuery
-                    );
+                    response = _repo.listCharacters(limit, offset, _nameQuery);
                 }
 
+                _characterList = response.list();
+                _totalCharacterCount = response.characterCount();
                 _cachedPage = _currentPage;
             }
         } catch (
@@ -70,6 +69,12 @@ public class CharacterPaginationViewModel {
 
     public boolean nextPage() {
         // In the future: compare with Math.ceil(cachedItemCount / ROWS_PER_PAGE)
+        int max = maxPageCount();
+        if (_currentPage >= max) {
+            _currentPage = max;
+            return false;
+        }
+
         ++_currentPage;
         return true;
     }
@@ -107,5 +112,15 @@ public class CharacterPaginationViewModel {
 
     public boolean hasQuery() {
         return _nameQuery != null && !_nameQuery.isBlank();
+    }
+
+    public int getTotalCharacterCount() {
+        return _totalCharacterCount;
+    }
+
+    public int maxPageCount() {
+        return (int) Math.ceil(
+            (double) _totalCharacterCount / (double) ROWS_PER_PAGE
+        );
     }
 }

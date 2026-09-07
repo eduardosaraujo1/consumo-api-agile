@@ -21,7 +21,10 @@ public class CharacterQueryView implements View {
     private void writeHeader() {
         System.out.println(
             Ansi.colorize(
-                "3. Pesquisa de Personagens --- Página " + paginator.getPage(),
+                "3. Pesquisa de Personagens --- Página %d de %d".formatted(
+                    paginator.getPage(),
+                    paginator.maxPageCount()
+                ),
                 Ansi.Foreground.CYAN
             )
         );
